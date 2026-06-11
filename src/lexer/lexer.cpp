@@ -1,6 +1,5 @@
-#include <iostream>
+#include <stdexcept>
 #include "lexer.h"
-#include <string>
 using namespace std;
 
 Lexer::Lexer(string s)
@@ -98,6 +97,6 @@ Token Lexer::nextToken()
     }
     else
     {
-        throw runtime_error("Unknown character encountered");
+        throw std::runtime_error("Unknown character encountered");
     }
 }
