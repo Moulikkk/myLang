@@ -5,7 +5,7 @@ No libraries. Just a handwritten lexer, parser, compiler, and VM.
 
 ## Status
 - [x] Lexer
-- [ ] Parser
+- [x] Parser
 - [ ] Bytecode compiler
 - [ ] Virtual machine
 
