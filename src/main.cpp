@@ -10,7 +10,7 @@ int main()
 
     Parser parser(lexer);
 
-    int result = parser.parseExpression();
+    int result = parser.parse();
 
     cout << "Result: " << result << endl;
 

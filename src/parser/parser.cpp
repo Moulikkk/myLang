@@ -37,7 +37,7 @@ int Parser::parseFactor()
 
         int value = parseExpression();
 
-        consume(RPAREN);
+        consume(RPAREN); 
 
         return value;
     }
@@ -49,9 +49,7 @@ int Parser::parseTerm()
 {
     int result = parseFactor();
 
-    while (
-        curr_Token.type == STAR ||
-        curr_Token.type == SLASH)
+    while (curr_Token.type == STAR ||curr_Token.type == SLASH)
     {
         TokenType op = curr_Token.type;
 
@@ -64,7 +62,7 @@ int Parser::parseTerm()
         {
             consume(SLASH);
             result /= parseFactor();
-        }
+        }   
     }
 
     return result;
@@ -74,9 +72,7 @@ int Parser::parseExpression()
 {
     int result = parseTerm();
 
-    while (
-        curr_Token.type == PLUS ||
-        curr_Token.type == MINUS)
+    while (curr_Token.type == PLUS ||curr_Token.type == MINUS)
     {
         TokenType op = curr_Token.type;
 
@@ -85,11 +81,24 @@ int Parser::parseExpression()
             consume(PLUS);
             result += parseTerm();
         }
-        else
+        else 
         {
             consume(MINUS);
             result -= parseTerm();
         }
+    }
+
+    return result;
+}
+
+
+int Parser::parse()
+{
+    int result = parseExpression();
+
+    if (curr_Token.type != END)
+    {
+        throw std::runtime_error("Unexpected token after expression");
     }
 
     return result;

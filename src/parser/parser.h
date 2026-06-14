@@ -19,6 +19,8 @@ class Parser
     int parseTerm();
     
     int parseFactor();
+
+    int parse();
  
 };
 
