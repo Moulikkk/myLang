@@ -22,32 +22,33 @@ void Parser::consume(TokenType expectedType)
     advance();
 }
 
-int Parser::parseFactor()
+std::unique_ptr<ASTNode> Parser::parseFactor()
 {
     if (curr_Token.type == NUMBER)
     {
         int value = std::stoi(curr_Token.value);
         consume(NUMBER);
-        return value;
+        
+        return  std::make_unique<NumberNode>(value);
     }
 
     if (curr_Token.type == LPAREN)
     {
         consume(LPAREN);
 
-        int value = parseExpression();
+       unique_ptr<ASTNode> result = parseExpression();
 
         consume(RPAREN); 
 
-        return value;
+        return result;
     }
 
     throw std::runtime_error("Expected number or '('");
 }
 
-int Parser::parseTerm()
+std::unique_ptr<ASTNode> Parser::parseTerm()
 {
-    int result = parseFactor();
+   unique_ptr<ASTNode> result = parseFactor();
 
     while (curr_Token.type == STAR ||curr_Token.type == SLASH)
     {
@@ -56,21 +57,21 @@ int Parser::parseTerm()
         if (op == STAR)
         {
             consume(STAR);
-            result *= parseFactor();
+            result =  make_unique<BinaryOpNode>("*",move(result),parseFactor());
         }
         else
         {
             consume(SLASH);
-            result /= parseFactor();
+            result = make_unique<BinaryOpNode>("/",move(result),parseFactor());
         }   
     }
 
     return result;
 }
 
-int Parser::parseExpression()
+std::unique_ptr<ASTNode> Parser::parseExpression()
 {
-    int result = parseTerm();
+    unique_ptr<ASTNode> result = parseTerm();
 
     while (curr_Token.type == PLUS ||curr_Token.type == MINUS)
     {
@@ -79,12 +80,12 @@ int Parser::parseExpression()
         if (op == PLUS)
         {
             consume(PLUS);
-            result += parseTerm();
+            result = make_unique<BinaryOpNode>("+",move(result),parseTerm());
         }
         else 
         {
             consume(MINUS);
-            result -= parseTerm();
+             result = make_unique<BinaryOpNode>("-",move(result),parseTerm());
         }
     }
 
@@ -92,9 +93,9 @@ int Parser::parseExpression()
 }
 
 
-int Parser::parse()
+std::unique_ptr<ASTNode> Parser::parse()
 {
-    int result = parseExpression();
+    unique_ptr<ASTNode> result = parseExpression();
 
     if (curr_Token.type != END)
     {

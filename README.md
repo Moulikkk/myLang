@@ -32,12 +32,17 @@ g++ src/main.cpp src/lexer.cpp src/parser.cpp -o lang
 
 ## Project Structure
 ```
-src/
-├── main.cpp
-├── lexer.h
-├── lexer.cpp
-├── parser.h
-└── parser.cpp
+MYLANG/
+├── src/
+│   ├── lexer/
+│   │   ├── lexer.h
+│   │   └── lexer.cpp
+│   ├── parser/
+│   │   ├── parser.h
+│   │   └── parser.cpp
+│   └── main.cpp
+├── .gitignore
+└── README.md
 ``` 
 
 ## Goals
