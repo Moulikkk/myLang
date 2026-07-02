@@ -1,4 +1,4 @@
-# [MyLang]
+# MyLang
 
 A scripting language and bytecode virtual machine built from scratch in C++.
 No libraries. Just a handwritten lexer, parser, compiler, and VM.
@@ -6,8 +6,11 @@ No libraries. Just a handwritten lexer, parser, compiler, and VM.
 ## Status
 - [x] Lexer
 - [x] Parser
-- [ ] Bytecode compiler
-- [ ] Virtual machine
+- [x] Bytecode compiler
+- [x] Virtual machine
+- [ ] Variables and control flow
+- [ ] Functions
+- [ ] Debugging tools (disassembler or REPL)
 
 ## How it works
 Source code goes through a 4-stage pipeline:
@@ -21,18 +24,18 @@ Source → Lexer → Parser → Compiler → Bytecode → VM → Output
 
 ## Build & Run
 ```bash
-g++ src/main.cpp src/lexer.cpp src/parser.cpp -o lang
+g++ src/main.cpp src/lexer/lexer.cpp src/parser/parser.cpp src/compiler/compiler.cpp src/vm/vm.cpp -o lang
 ./lang
 ```
 
 ## Example
-```
-// coming soon — will update as the language develops
-```
+// arithmetic expressions currently supported
+12 + 3 * (45 - 6)  // outputs 129
 
 ## Project Structure
+
 ```
-MYLANG/
+MyLang/
 ├── src/
 │   ├── lexer/
 │   │   ├── lexer.h
@@ -40,10 +43,16 @@ MYLANG/
 │   ├── parser/
 │   │   ├── parser.h
 │   │   └── parser.cpp
+│   ├── compiler/
+│   │   ├── compiler.h
+│   │   └── compiler.cpp
+│   ├── vm/
+│   │   ├── vm.h
+│   │   └── vm.cpp
 │   └── main.cpp
 ├── .gitignore
 └── README.md
-``` 
+```
 
 ## Goals
 - Fast execution via stack-based bytecode

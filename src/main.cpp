@@ -1,12 +1,20 @@
 #include <iostream>
 #include "lexer/lexer.h"
 #include "parser/parser.h"
+#include "compiler/compiler.h"
+#include "vm/vm.h"
 
 using namespace std;
 
+// only for debugging
 void printAST(ASTNode* node, int indent)
 {
     NumberNode* num = dynamic_cast<NumberNode*>(node);
+
+    if(node == nullptr)
+    {
+        return;
+    }
 
     if (num != nullptr)
     {
@@ -38,12 +46,12 @@ void printAST(ASTNode* node, int indent)
 int main()
 {
     Lexer lexer("12 + 3 * (45 - 6)");
-
     Parser parser(lexer);
+    Compiler compiler;
+    VM vm;
 
-    std::unique_ptr<ASTNode> root = parser.parse();
-
-    printAST(root.get(), 0);
+    Chunk chunk = compiler.run(parser.parse());
+    vm.execute(chunk);
 
     return 0;
 }
