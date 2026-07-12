@@ -58,6 +58,20 @@ void VM::execute(Chunk chunk)
             stack.push_back(left/right);
             ip++;
        }
+       else if(chunk.code[ip] == OP_STORE)
+       {
+          double value = stack.back();
+          stack.pop_back();
+          ip++;
+          chunk.variables[chunk.code[ip]] = value;
+          ip++;
+       }
+       else if(chunk.code[ip] == OP_LOAD)
+       {
+          ip++;
+          stack.push_back(chunk.variables[ip]);
+          ip++;
+       }
        else if(chunk.code[ip] == OP_PRINT)
        {
             cout << stack.back();
@@ -66,6 +80,10 @@ void VM::execute(Chunk chunk)
        else if(chunk.code[ip] == OP_HALT)
        {
             return;
+       }
+       else
+       {
+          throw std::runtime_error("Unknown AST node"); 
        }
     }   
 }

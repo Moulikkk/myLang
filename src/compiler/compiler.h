@@ -10,6 +10,8 @@ enum OpCode
     OP_SUB,
     OP_MUL,
     OP_DIV,
+    OP_STORE,
+    OP_LOAD,
     OP_PRINT,
     OP_HALT
 };
@@ -18,12 +20,14 @@ struct Chunk
 {
     vector<int> code;
     vector<double> constants;
+    vector<string> variables;
 };
 
 class Compiler
 {
     Chunk chunk;
     void compile(ASTNode* node);
+    int getVariableIndex(const string& name);
 
     public:
     Chunk run(unique_ptr<ASTNode> root);

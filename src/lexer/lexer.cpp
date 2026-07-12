@@ -2,6 +2,23 @@
 #include "lexer.h"
 using namespace std;
 
+//helper functions
+bool isLetter(char c)
+{   
+    return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
+}
+
+bool isDigit(char c)
+{
+    return ((c >= '0') && (c <= '9'));
+}
+
+bool isIdentifierChar(char c)
+{
+    return (isLetter(c) || isDigit(c) || c == '_');
+}
+//helper function
+
 Lexer::Lexer(string s)
 {
     input = s;
@@ -65,12 +82,12 @@ Token Lexer::nextToken()
 
         return Divide;
     }
-    else if(input[curr_position] >= '0' && input[curr_position] <= '9' )
+    else if(isDigit(input[curr_position]))
     {
         Token Number;
         Number.type = TokenType::NUMBER;
 
-        while(curr_position < input.size() && input[curr_position] >= '0' && input[curr_position] <= '9')
+        while(curr_position < input.size() && isDigit(input[curr_position]))
         {
             Number.value.push_back(input[curr_position]);
             curr_position++;
@@ -80,7 +97,7 @@ Token Lexer::nextToken()
     else if(input[curr_position] == '(')
     {
         Token Left;
-        Left.type = LPAREN;
+        Left.type = TokenType::LPAREN;
         Left.value = "(";
         curr_position++;
 
@@ -89,11 +106,31 @@ Token Lexer::nextToken()
     else if(input[curr_position] == ')')
     {
         Token Right;
-        Right.type = RPAREN;
+        Right.type = TokenType::RPAREN;
         Right.value = ")";
         curr_position++;
 
         return Right;
+    }
+    else if(isLetter(input[curr_position]) || input[curr_position] == '_')
+    {
+        Token Variable;
+        Variable.type = TokenType::IDENTIFIER;
+        while(curr_position < input.size() && (isIdentifierChar(input[curr_position])))
+        {
+            Variable.value.push_back(input[curr_position]);
+            curr_position++;
+        }
+        return Variable;
+    }
+    else if(input[curr_position] == '=')
+    {
+        Token equal;
+        equal.type = TokenType::EQUAL;
+        equal.value = "=";
+        curr_position++;
+
+        return equal;
     }
     else
     {
