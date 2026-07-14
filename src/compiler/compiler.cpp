@@ -33,10 +33,20 @@ void Compiler::compile(ASTNode* node)
         return;
     }
 
+    ProgramNode* program = dynamic_cast<ProgramNode*>(node);
     NumberNode* num = dynamic_cast<NumberNode*>(node);
     BinaryOpNode* bin = dynamic_cast<BinaryOpNode*>(node);
     VariableNode* var = dynamic_cast<VariableNode*>(node);
     AssignmentNode* assign = dynamic_cast<AssignmentNode*>(node);
+
+    if (program != nullptr)
+    {
+        for (int i = 0; i < program->statements.size(); i++)
+        {
+            compile(program->statements[i].get());
+        }
+        return;
+    }
 
     if(num != nullptr)
     {
@@ -104,7 +114,6 @@ Chunk Compiler::run(unique_ptr<ASTNode> root)
 {
     chunk = Chunk();
     compile(root.get());
-    chunk.code.push_back(OP_PRINT);
     chunk.code.push_back(OP_HALT);
 
     return chunk;

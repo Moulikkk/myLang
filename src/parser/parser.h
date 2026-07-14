@@ -1,6 +1,7 @@
 #pragma once
 #include "../lexer/lexer.h" 
 #include <memory>
+#include <vector>
 
 struct ASTNode
 {
@@ -48,6 +49,10 @@ struct AssignmentNode : ASTNode
     }
 };
 
+struct ProgramNode : ASTNode
+{
+    vector<unique_ptr<ASTNode>> statements;
+};
 
 
 class Parser

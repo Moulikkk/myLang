@@ -120,22 +120,31 @@ std::unique_ptr<ASTNode> Parser::parseAssignment()
 }
 
 std::unique_ptr<ASTNode> Parser::parse()
-{   
-    unique_ptr<ASTNode> result;
+{
+    std::unique_ptr<ProgramNode> program = std::make_unique<ProgramNode>();
 
-    if (curr_Token.type == IDENTIFIER && peek_Token.type == EQUAL)
+    while (curr_Token.type != END)
     {
-        result =  parseAssignment();    
-    }
-    else
-    {
-        result = parseExpression();
+        if (curr_Token.type == NEWLINE)
+        {
+            consume(NEWLINE);
+            continue;
+        }
+
+        if (curr_Token.type == IDENTIFIER && peek_Token.type == EQUAL)
+        {
+            program->statements.push_back(parseAssignment());
+        }
+        else
+        {
+            program->statements.push_back(parseExpression());
+        }
+
+        if (curr_Token.type == NEWLINE)
+        {
+            consume(NEWLINE);
+        }
     }
 
-    if (curr_Token.type != END)
-    {
-        throw std::runtime_error("Unexpected token");
-    }
-    
-    return result;
-}
+    return program;
+} 

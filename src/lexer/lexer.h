@@ -11,9 +11,10 @@ enum TokenType
     SLASH,
     LPAREN,
     RPAREN,
-    END,
     IDENTIFIER,
-    EQUAL,
+    NEWLINE,
+    END,
+    EQUAL
 };
 
 

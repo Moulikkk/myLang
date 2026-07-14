@@ -132,6 +132,13 @@ Token Lexer::nextToken()
 
         return equal;
     }
+    else if(input[curr_position] == '\n')
+    {
+        Token newline;
+        newline.type = TokenType::NEWLINE;
+        curr_position++;
+        return newline;
+    }
     else
     {
         throw std::runtime_error("Unknown character encountered");
