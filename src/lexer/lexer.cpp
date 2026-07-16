@@ -2,145 +2,153 @@
 #include "lexer.h"
 using namespace std;
 
-//helper functions
-bool isLetter(char c)
-{   
-    return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
-}
-
-bool isDigit(char c)
-{
-    return ((c >= '0') && (c <= '9'));
-}
-
-bool isIdentifierChar(char c)
-{
-    return (isLetter(c) || isDigit(c) || c == '_');
-}
-//helper function
-
 Lexer::Lexer(string s)
 {
     input = s;
 }
+
+bool Lexer::match(char expected)
+{
+    if (curr_position + 1 >= input.size())
+    {
+        return false;
+    }
+
+    if (input[curr_position + 1] != expected)
+    {
+        return false;
+    }
+
+    curr_position += 2;
+    return true;
+}
+
 Token Lexer::nextToken()
 {
+    while (curr_position < input.size() && input[curr_position] == ' ')
+    {
+        curr_position++;
+    }
 
-    if(curr_position >= input.size())
+    if (curr_position >= input.size())
     {
         Token End;
         End.type = TokenType::END;
-
         return End;
     }
-    
-    while(curr_position < input.size() && input[curr_position] == ' ')
+
+    if (input[curr_position] == '+')
     {
         curr_position++;
+        return {TokenType::PLUS, "+"};
     }
 
-    if(curr_position >= input.size())
+    if (input[curr_position] == '-')
     {
-        Token End;
-        End.type = TokenType::END;
-
-        return End;
-    }
-    else if(input[curr_position] == '+')
-    {
-        Token Addition;
-        Addition.type = TokenType::PLUS;
-        Addition.value = "+";
         curr_position++;
-
-        return Addition;
+        return {TokenType::MINUS, "-"};
     }
-    else if(input[curr_position] == '-')
+
+    if (input[curr_position] == '*')
     {
-        Token Subtract;
-        Subtract.type = TokenType::MINUS;
-        Subtract.value = "-";
         curr_position++;
-
-        return Subtract;
+        return {TokenType::STAR, "*"};
     }
-    else if(input[curr_position] == '*')
+
+    if (input[curr_position] == '/')
     {
-        Token Multiply;
-        Multiply.type = TokenType::STAR;
-        Multiply.value = "*";
         curr_position++;
-
-        return Multiply;
+        return {TokenType::SLASH, "/"};
     }
-    else if(input[curr_position] == '/')
+
+    if (input[curr_position] == '(')
     {
-        Token Divide;
-        Divide.type = TokenType::SLASH;
-        Divide.value = "/";
         curr_position++;
-
-        return Divide;
+        return {TokenType::LPAREN, "("};
     }
-    else if(isDigit(input[curr_position]))
+
+    if (input[curr_position] == ')')
+    {
+        curr_position++;
+        return {TokenType::RPAREN, ")"};
+    }
+
+    if (input[curr_position] == '<')
+    {
+        if (match('='))
+        {
+            return {TokenType::LESS_EQUAL, "<="};
+        }
+
+        curr_position++;
+        return {TokenType::LESS, "<"};
+    }
+
+    if (input[curr_position] == '>')
+    {
+        if (match('='))
+        {
+            return {TokenType::GREATER_EQUAL, ">="};
+        }
+
+        curr_position++;
+        return {TokenType::GREATER, ">"};
+    }
+
+    if (input[curr_position] == '=')
+    {
+        if (match('='))
+        {
+            return {TokenType::EQUAL_EQUAL, "=="};
+        }
+
+        curr_position++;
+        return {TokenType::EQUAL, "="};
+    }
+
+    if (input[curr_position] == '!')
+    {
+        if (match('='))
+        {
+            return {TokenType::BANG_EQUAL, "!="};
+        }
+
+        throw runtime_error("Unexpected '!'");
+    }
+
+    if (isDigit(input[curr_position]))
     {
         Token Number;
         Number.type = TokenType::NUMBER;
 
-        while(curr_position < input.size() && isDigit(input[curr_position]))
+        while (curr_position < input.size() && isDigit(input[curr_position]))
         {
             Number.value.push_back(input[curr_position]);
             curr_position++;
         }
+
         return Number;
     }
-    else if(input[curr_position] == '(')
-    {
-        Token Left;
-        Left.type = TokenType::LPAREN;
-        Left.value = "(";
-        curr_position++;
 
-        return Left;
-    }
-    else if(input[curr_position] == ')')
-    {
-        Token Right;
-        Right.type = TokenType::RPAREN;
-        Right.value = ")";
-        curr_position++;
-
-        return Right;
-    }
-    else if(isLetter(input[curr_position]) || input[curr_position] == '_')
+    if (isLetter(input[curr_position]) || input[curr_position] == '_')
     {
         Token Variable;
         Variable.type = TokenType::IDENTIFIER;
-        while(curr_position < input.size() && (isIdentifierChar(input[curr_position])))
+
+        while (curr_position < input.size() && isIdentifierChar(input[curr_position]))
         {
             Variable.value.push_back(input[curr_position]);
             curr_position++;
         }
+
         return Variable;
     }
-    else if(input[curr_position] == '=')
-    {
-        Token equal;
-        equal.type = TokenType::EQUAL;
-        equal.value = "=";
-        curr_position++;
 
-        return equal;
-    }
-    else if(input[curr_position] == '\n')
+    if (input[curr_position] == '\n')
     {
-        Token newline;
-        newline.type = TokenType::NEWLINE;
         curr_position++;
-        return newline;
+        return {TokenType::NEWLINE, "\\n"};
     }
-    else
-    {
-        throw std::runtime_error("Unknown character encountered");
-    }
+
+    throw runtime_error("Unknown character encountered");
 }

@@ -9,6 +9,6 @@ class VM
     vector<double> stack;
     map<string, double> variables;
 
-    public:
+public:
     void execute(Chunk chunk);
 };

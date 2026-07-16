@@ -11,27 +11,50 @@ enum TokenType
     SLASH,
     LPAREN,
     RPAREN,
+    LESS,
+    GREATER,
+    LESS_EQUAL,
+    GREATER_EQUAL,
+    EQUAL_EQUAL,
+    BANG_EQUAL,
     IDENTIFIER,
     NEWLINE,
     END,
     EQUAL
 };
 
-
 struct Token
 {
     TokenType type;
-    string value; 
+    string value;
 };
-
 
 class Lexer
 {
     string input;
     int curr_position = 0;
 
-    public:
+public:
     Lexer(string s);
     Token nextToken();
-
+    bool match(char expected);
 };
+
+// helper functions
+
+bool isLetter(char c)
+{
+    return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
+}
+
+bool isDigit(char c)
+{
+    return ((c >= '0') && (c <= '9'));
+}
+
+bool isIdentifierChar(char c)
+{
+    return (isLetter(c) || isDigit(c) || c == '_');
+}
+
+// helper function

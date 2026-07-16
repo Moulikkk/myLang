@@ -10,6 +10,12 @@ enum OpCode
     OP_SUB,
     OP_MUL,
     OP_DIV,
+    OP_LESS,
+    OP_GREATER,
+    OP_LESS_EQUAL,
+    OP_GREATER_EQUAL,
+    OP_EQUAL,
+    OP_NOT_EQUAL,
     OP_STORE,
     OP_LOAD,
     OP_PRINT,
@@ -26,9 +32,9 @@ struct Chunk
 class Compiler
 {
     Chunk chunk;
-    void compile(ASTNode* node);
-    int getVariableIndex(const string& name);
+    void compile(ASTNode *node);
+    int getVariableIndex(const string &name);
 
-    public:
+public:
     Chunk run(unique_ptr<ASTNode> root);
 };

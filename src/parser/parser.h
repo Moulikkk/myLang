@@ -1,5 +1,5 @@
 #pragma once
-#include "../lexer/lexer.h" 
+#include "../lexer/lexer.h"
 #include <memory>
 #include <vector>
 
@@ -18,14 +18,13 @@ struct NumberNode : ASTNode
     }
 };
 
-
 struct BinaryOpNode : ASTNode
 {
     string op;
     unique_ptr<ASTNode> left;
     unique_ptr<ASTNode> right;
 
-    BinaryOpNode(string s, unique_ptr<ASTNode> l, unique_ptr<ASTNode> r): op(s), left(move(l)), right(move(r))
+    BinaryOpNode(string s, unique_ptr<ASTNode> l, unique_ptr<ASTNode> r) : op(s), left(move(l)), right(move(r))
     {
     }
 };
@@ -34,7 +33,7 @@ struct VariableNode : ASTNode
 {
     string variableName;
 
-    VariableNode(string s): variableName(s)
+    VariableNode(string s) : variableName(s)
     {
     }
 };
@@ -44,7 +43,7 @@ struct AssignmentNode : ASTNode
     unique_ptr<ASTNode> left;
     unique_ptr<ASTNode> right;
 
-    AssignmentNode(unique_ptr<ASTNode> l, unique_ptr<ASTNode> r): left(move(l)), right(move(r))
+    AssignmentNode(unique_ptr<ASTNode> l, unique_ptr<ASTNode> r) : left(move(l)), right(move(r))
     {
     }
 };
@@ -54,15 +53,13 @@ struct ProgramNode : ASTNode
     vector<unique_ptr<ASTNode>> statements;
 };
 
-
 class Parser
 {
     Lexer lexer;
     Token curr_Token;
     Token peek_Token;
 
-    public: 
-
+public:
     Parser(Lexer &l);
 
     void advance();
@@ -72,12 +69,12 @@ class Parser
     std::unique_ptr<ASTNode> parseExpression();
 
     std::unique_ptr<ASTNode> parseTerm();
-    
+
     std::unique_ptr<ASTNode> parseFactor();
 
     std::unique_ptr<ASTNode> parseAssignment();
 
-    std::unique_ptr<ASTNode> parse();
- 
-};
+    std::unique_ptr<ASTNode> parseComparison();
 
+    std::unique_ptr<ASTNode> parse();
+};
