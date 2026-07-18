@@ -10,14 +10,20 @@ enum OpCode
     OP_SUB,
     OP_MUL,
     OP_DIV,
+
     OP_LESS,
     OP_GREATER,
     OP_LESS_EQUAL,
     OP_GREATER_EQUAL,
     OP_EQUAL,
     OP_NOT_EQUAL,
+
+    OP_JUMP,
+    OP_JUMP_IF_FALSE,
+
     OP_STORE,
     OP_LOAD,
+
     OP_PRINT,
     OP_HALT
 };
