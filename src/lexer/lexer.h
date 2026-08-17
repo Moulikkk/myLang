@@ -42,17 +42,17 @@ public:
 
 // helper functions
 
-bool isLetter(char c)
+inline bool isLetter(char c)
 {
     return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
 }
 
-bool isDigit(char c)
+inline bool isDigit(char c)
 {
     return ((c >= '0') && (c <= '9'));
 }
 
-bool isIdentifierChar(char c)
+inline bool isIdentifierChar(char c)
 {
     return (isLetter(c) || isDigit(c) || c == '_');
 }
