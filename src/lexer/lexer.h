@@ -18,6 +18,7 @@ enum TokenType
     EQUAL_EQUAL,
     BANG_EQUAL,
     IDENTIFIER,
+    IF,
     NEWLINE,
     END,
     EQUAL

@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <cctype>
 #include "lexer.h"
 using namespace std;
 
@@ -139,6 +140,11 @@ Token Lexer::nextToken()
         {
             Variable.value.push_back(input[curr_position]);
             curr_position++;
+        }
+
+        if(Variable.value == "if")
+        {
+            Variable.type  = TokenType::IF;
         }
 
         return Variable;

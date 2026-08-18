@@ -124,6 +124,28 @@ void VM::execute(Chunk chunk)
       stack.push_back(left != right);
       ip++;
     }
+    else if(chunk.code[ip] == OP_JUMP)
+    {
+        ip++;
+        int destination = chunk.code[ip];    
+        ip = destination;
+    }
+    else if(chunk.code[ip] == OP_JUMP_IF_FALSE)
+    {
+      double condition = stack.back();
+      stack.pop_back();
+      ip++;
+      int destination = chunk.code[ip];
+      
+      if(!condition)
+      {
+        ip = destination;
+      }
+      else
+      {
+        ip++;
+      }
+    }
     else if (chunk.code[ip] == OP_STORE)
     {
       double value = stack.back();
