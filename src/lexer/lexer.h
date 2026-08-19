@@ -11,6 +11,8 @@ enum TokenType
     SLASH,
     LPAREN,
     RPAREN,
+    LBRACE,
+    RBRACE,
     LESS,
     GREATER,
     LESS_EQUAL,

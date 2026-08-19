@@ -39,7 +39,6 @@ std::unique_ptr<ASTNode> Parser::parseFactor()
         consume(LPAREN);
 
         unique_ptr<ASTNode> result = parseComparison();
-        ;
 
         consume(RPAREN);
 
@@ -162,6 +161,49 @@ std::unique_ptr<ASTNode> Parser::parseAssignment()
     return result;
 }
 
+std::unique_ptr<ASTNode> Parser::parseIf()
+{
+    consume(IF);
+
+    consume(LPAREN);
+    std::unique_ptr<ASTNode> condition = parseComparison();
+    consume(RPAREN);
+    
+    consume(LBRACE);
+
+    ProgramNode body;
+
+    while(curr_Token.type != RBRACE)
+    {
+        body.statements.push_back(parseStatement());
+    }
+
+    return std::make_unique<IfNode>(std::move(condition),body);
+}
+
+std::unique_ptr<ASTNode> Parser::parseStatement()
+{
+    if(curr_Token.type == IF)
+    {
+        return parseIf();
+    }
+    else if(curr_Token.type == IDENTIFIER )
+    {
+        if(peek_Token.type == EQUAL)
+        {
+           return parseAssignment();
+        }
+        else
+        {
+            return parseComparison();  
+        }   
+    }
+    else
+    {
+       return parseComparison();
+    }
+}
+
 std::unique_ptr<ASTNode> Parser::parse()
 {
     std::unique_ptr<ProgramNode> program = std::make_unique<ProgramNode>();
@@ -174,14 +216,7 @@ std::unique_ptr<ASTNode> Parser::parse()
             continue;
         }
 
-        if (curr_Token.type == IDENTIFIER && peek_Token.type == EQUAL)
-        {
-            program->statements.push_back(parseAssignment());
-        }
-        else
-        {
-            program->statements.push_back(parseComparison());
-        }
+        program->statements.push_back(parseStatement());
 
         if (curr_Token.type == NEWLINE)
         {

@@ -53,6 +53,17 @@ struct ProgramNode : ASTNode
     vector<unique_ptr<ASTNode>> statements;
 };
 
+struct IfNode : ASTNode
+{
+    unique_ptr<ASTNode> condition;
+    unique_ptr<ProgramNode> body;
+
+    IfNode(unique_ptr<ASTNode> c,  unique_ptr<ProgramNode>b) : condition(move(c)), body(move(b))
+    {
+        
+    }
+};
+
 class Parser
 {
     Lexer lexer;
@@ -75,6 +86,10 @@ public:
     std::unique_ptr<ASTNode> parseAssignment();
 
     std::unique_ptr<ASTNode> parseComparison();
+
+    std::unique_ptr<ASTNode> parseIf();
+
+    std::unique_ptr<ASTNode> parseStatement();
 
     std::unique_ptr<ASTNode> parse();
 };

@@ -74,6 +74,18 @@ Token Lexer::nextToken()
         return {TokenType::RPAREN, ")"};
     }
 
+    if(input[curr_position] == '{')
+    {
+        curr_position++;
+        return {TokenType::LBRACE,"{"};
+    }
+
+    if(input[curr_position] == '}')
+    {
+        curr_position++;
+        return {TokenType::LBRACE,"}"};
+    }
+
     if (input[curr_position] == '<')
     {
         if (match('='))
