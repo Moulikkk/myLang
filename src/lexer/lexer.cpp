@@ -158,6 +158,10 @@ Token Lexer::nextToken()
         {
             Variable.type  = TokenType::IF;
         }
+        else if(Variable.value == "else")
+        {
+            Variable.type = TokenType::ELSE;
+        }
 
         return Variable;
     }

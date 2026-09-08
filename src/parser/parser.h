@@ -57,8 +57,9 @@ struct IfNode : ASTNode
 {
     unique_ptr<ASTNode> condition;
     unique_ptr<ProgramNode> body;
+    unique_ptr<ASTNode> elseBranch;
 
-    IfNode(unique_ptr<ASTNode> c,  unique_ptr<ProgramNode>b) : condition(move(c)), body(move(b))
+    IfNode(unique_ptr<ASTNode> c,  unique_ptr<ProgramNode> b , unique_ptr<ASTNode> e = nullptr) : condition(move(c)), body(move(b)),elseBranch(move(e))
     {
         
     }

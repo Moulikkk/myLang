@@ -38,6 +38,7 @@ void Compiler::compile(ASTNode *node)
     BinaryOpNode *bin = dynamic_cast<BinaryOpNode *>(node);
     VariableNode *var = dynamic_cast<VariableNode *>(node);
     AssignmentNode *assign = dynamic_cast<AssignmentNode *>(node);
+    IfNode *ifNode = dynamic_cast<IfNode *>(node);
 
     if (program != nullptr)
     {
@@ -133,6 +134,40 @@ void Compiler::compile(ASTNode *node)
 
         chunk.code.push_back(OP_STORE);
         chunk.code.push_back(index);
+
+        return;
+    }
+
+    else if (ifNode != nullptr)
+    {
+        compile(ifNode->condition.get());
+
+        chunk.code.push_back(OP_JUMP_IF_FALSE);
+
+        int jumpIfFalsePosition = chunk.code.size();
+
+        chunk.code.push_back(0);
+
+        compile(ifNode->body.get());
+
+        if (ifNode->elseBranch != nullptr)
+        {
+            chunk.code.push_back(OP_JUMP);
+
+            int jumpPosition = chunk.code.size();
+
+            chunk.code.push_back(0);
+
+            chunk.code[jumpIfFalsePosition] = chunk.code.size();
+
+            compile(ifNode->elseBranch.get());
+
+            chunk.code[jumpPosition] = chunk.code.size();
+        }
+        else
+        {
+            chunk.code[jumpIfFalsePosition] = chunk.code.size();
+        }
 
         return;
     }
