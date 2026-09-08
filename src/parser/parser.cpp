@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <string>
 #include "parser.h"
+using namespace std;
 
 Parser::Parser(Lexer &l) : lexer(l)
 {

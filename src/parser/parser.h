@@ -20,48 +20,47 @@ struct NumberNode : ASTNode
 
 struct BinaryOpNode : ASTNode
 {
-    string op;
-    unique_ptr<ASTNode> left;
-    unique_ptr<ASTNode> right;
+    std::string op;
+    std::unique_ptr<ASTNode> left;
+    std::unique_ptr<ASTNode> right;
 
-    BinaryOpNode(string s, unique_ptr<ASTNode> l, unique_ptr<ASTNode> r) : op(s), left(move(l)), right(move(r))
+    BinaryOpNode(std::string s, std::unique_ptr<ASTNode> l, std::unique_ptr<ASTNode> r) : op(s), left(std::move(l)), right(std::move(r))
     {
     }
 };
 
 struct VariableNode : ASTNode
 {
-    string variableName;
+    std::string variableName;
 
-    VariableNode(string s) : variableName(s)
+    VariableNode(std::string s) : variableName(s)
     {
     }
 };
 
 struct AssignmentNode : ASTNode
 {
-    unique_ptr<ASTNode> left;
-    unique_ptr<ASTNode> right;
+    std::unique_ptr<ASTNode> left;
+    std::unique_ptr<ASTNode> right;
 
-    AssignmentNode(unique_ptr<ASTNode> l, unique_ptr<ASTNode> r) : left(move(l)), right(move(r))
+    AssignmentNode(std::unique_ptr<ASTNode> l, std::unique_ptr<ASTNode> r) : left(std::move(l)), right(std::move(r))
     {
     }
 };
 
 struct ProgramNode : ASTNode
 {
-    vector<unique_ptr<ASTNode>> statements;
+    std::vector<std::unique_ptr<ASTNode>> statements;
 };
 
 struct IfNode : ASTNode
 {
-    unique_ptr<ASTNode> condition;
-    unique_ptr<ProgramNode> body;
-    unique_ptr<ASTNode> elseBranch;
+    std::unique_ptr<ASTNode> condition;
+    std::unique_ptr<ProgramNode> body;
+    std::unique_ptr<ASTNode> elseBranch;
 
-    IfNode(unique_ptr<ASTNode> c,  unique_ptr<ProgramNode> b , unique_ptr<ASTNode> e = nullptr) : condition(move(c)), body(move(b)),elseBranch(move(e))
+    IfNode(std::unique_ptr<ASTNode> c, std::unique_ptr<ProgramNode> b, std::unique_ptr<ASTNode> e = nullptr) : condition(std::move(c)), body(std::move(b)), elseBranch(std::move(e))
     {
-        
     }
 };
 
