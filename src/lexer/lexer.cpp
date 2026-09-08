@@ -83,7 +83,7 @@ Token Lexer::nextToken()
     if(input[curr_position] == '}')
     {
         curr_position++;
-        return {TokenType::LBRACE,"}"};
+        return {TokenType::RBRACE,"}"};
     }
 
     if (input[curr_position] == '<')

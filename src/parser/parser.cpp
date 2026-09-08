@@ -28,7 +28,7 @@ std::unique_ptr<ASTNode> Parser::parseFactor()
 {
     if (curr_Token.type == NUMBER)
     {
-        int value = std::stoi(curr_Token.value);
+        int value = std::stod(curr_Token.value);
         consume(NUMBER);
 
         return std::make_unique<NumberNode>(value);

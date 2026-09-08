@@ -45,7 +45,7 @@ void printAST(ASTNode* node, int indent)
 
 int main()
 {
-    Lexer lexer("12 + 3 * (45 - 6)");
+    Lexer lexer("x = 10\nif (x > 5) {\ny = 1\n}");
     Parser parser(lexer);
     Compiler compiler;
     VM vm;

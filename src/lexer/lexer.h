@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-using namespace std;
 
 enum TokenType
 {
@@ -30,21 +29,19 @@ enum TokenType
 struct Token
 {
     TokenType type;
-    string value;
+    std::string value;
 };
 
 class Lexer
 {
-    string input;
+    std::string input;
     int curr_position = 0;
 
 public:
-    Lexer(string s);
+    Lexer(std::string s);
     Token nextToken();
     bool match(char expected);
 };
-
-// helper functions
 
 inline bool isLetter(char c)
 {
@@ -60,5 +57,3 @@ inline bool isIdentifierChar(char c)
 {
     return (isLetter(c) || isDigit(c) || c == '_');
 }
-
-// helper function
