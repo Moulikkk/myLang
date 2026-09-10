@@ -242,7 +242,11 @@ std::unique_ptr<ASTNode> Parser::parseStatement()
     {
         return parseIf();
     }
-    else if(curr_Token.type == IDENTIFIER )
+    else if(curr_Token.type == WHILE)
+    {
+        return parseWhile();
+    }
+    else if(curr_Token.type == IDENTIFIER)
     {
         if(peek_Token.type == EQUAL)
         {
@@ -250,13 +254,49 @@ std::unique_ptr<ASTNode> Parser::parseStatement()
         }
         else
         {
-            return parseComparison();  
-        }   
+            return parseComparison();
+        }
     }
     else
     {
        return parseComparison();
     }
+}
+
+std::unique_ptr<ASTNode> Parser::parseWhile()
+{
+    consume(WHILE);
+
+    consume(LPAREN);
+    std::unique_ptr<ASTNode> condition = parseComparison();
+    consume(RPAREN);
+
+    consume(LBRACE);
+
+    std::unique_ptr<ProgramNode> body = std::make_unique<ProgramNode>();
+
+    while(curr_Token.type != RBRACE)
+    {
+        if (curr_Token.type == NEWLINE)
+        {
+            consume(NEWLINE);
+            continue;
+        }
+
+        body->statements.push_back(parseStatement());
+
+        if (curr_Token.type == NEWLINE)
+        {
+            consume(NEWLINE);
+        }
+    }
+
+    consume(RBRACE);
+
+    return std::make_unique<WhileNode>(
+        std::move(condition),
+        std::move(body)
+    );
 }
 
 std::unique_ptr<ASTNode> Parser::parse()

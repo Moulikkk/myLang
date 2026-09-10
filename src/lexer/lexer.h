@@ -21,6 +21,7 @@ enum TokenType
     IDENTIFIER,
     IF,
     ELSE,
+    WHILE,
     NEWLINE,
     END,
     EQUAL

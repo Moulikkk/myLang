@@ -162,6 +162,10 @@ Token Lexer::nextToken()
         {
             Variable.type = TokenType::ELSE;
         }
+        else if(Variable.value == "while")
+        {
+            Variable.type = TokenType::WHILE;
+        }
 
         return Variable;
     }

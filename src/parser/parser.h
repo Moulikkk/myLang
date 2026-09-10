@@ -64,6 +64,14 @@ struct IfNode : ASTNode
     }
 };
 
+struct WhileNode : ASTNode
+{
+    std::unique_ptr<ASTNode> condition;
+    std::unique_ptr<ProgramNode> body;
+
+    WhileNode(std::unique_ptr<ASTNode> c, std::unique_ptr<ProgramNode> b) : condition(move(c)), body(move(b)) {}
+};
+
 class Parser
 {
     Lexer lexer;
@@ -90,6 +98,8 @@ public:
     std::unique_ptr<ASTNode> parseIf();
 
     std::unique_ptr<ASTNode> parseStatement();
+
+    std::unique_ptr<ASTNode> parseWhile();
 
     std::unique_ptr<ASTNode> parse();
 };

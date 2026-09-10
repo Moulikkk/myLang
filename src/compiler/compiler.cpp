@@ -39,6 +39,7 @@ void Compiler::compile(ASTNode *node)
     VariableNode *var = dynamic_cast<VariableNode *>(node);
     AssignmentNode *assign = dynamic_cast<AssignmentNode *>(node);
     IfNode *ifNode = dynamic_cast<IfNode *>(node);
+    WhileNode *whileNode = dynamic_cast<WhileNode *>(node);
 
     if (program != nullptr)
     {
@@ -168,6 +169,29 @@ void Compiler::compile(ASTNode *node)
         {
             chunk.code[jumpIfFalsePosition] = chunk.code.size();
         }
+
+        return;
+    }
+
+    else if (whileNode != nullptr)
+    {
+        int loopStart = chunk.code.size();
+
+        compile(whileNode->condition.get());
+
+        chunk.code.push_back(OP_JUMP_IF_FALSE);
+
+        int jumpIfFalsePosition = chunk.code.size();
+
+        chunk.code.push_back(0);
+
+        compile(whileNode->body.get());
+
+        chunk.code.push_back(OP_JUMP);
+
+        chunk.code.push_back(loopStart);
+
+        chunk.code[jumpIfFalsePosition] = chunk.code.size();
 
         return;
     }
