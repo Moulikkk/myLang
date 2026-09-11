@@ -8,7 +8,8 @@ No libraries. Just a handwritten lexer, parser, compiler, and VM.
 - [x] Parser
 - [x] Bytecode compiler
 - [x] Virtual machine
-- [x] Variables and control flow
+- [x] Variables and control flow (if/else, while loops)
+- [x] Print statement
 - [ ] Functions
 - [ ] Debugging tools (disassembler or REPL)
 
@@ -29,15 +30,16 @@ g++ src/main.cpp src/lexer/lexer.cpp src/parser/parser.cpp src/compiler/compiler
 ```
 
 ## Example
-// put this inside lexer in main.cpp
- "x = 0\n"
-        "while (x < 5) {\n"
-        "x = x + 1\n"
-        "}\n"
-        "print x\n"
+```
+x = 0
+while (x < 5) {
+    x = x + 1
+}
+print x
+```
+Output: 5
 
 ## Project Structure
-
 ```
 MyLang/
 ├── src/
