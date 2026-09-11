@@ -22,6 +22,7 @@ enum TokenType
     IF,
     ELSE,
     WHILE,
+    PRINT,
     NEWLINE,
     END,
     EQUAL

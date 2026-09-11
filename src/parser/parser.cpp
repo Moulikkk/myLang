@@ -162,7 +162,7 @@ std::unique_ptr<ASTNode> Parser::parseAssignment()
     return result;
 }
 
-    std::unique_ptr<ASTNode> Parser::parseIf()
+std::unique_ptr<ASTNode> Parser::parseIf()
     {
         consume(IF);
 
@@ -257,6 +257,10 @@ std::unique_ptr<ASTNode> Parser::parseStatement()
             return parseComparison();
         }
     }
+    else if(curr_Token.type == PRINT)
+    {
+        return parsePrint();
+    }
     else
     {
        return parseComparison();
@@ -297,6 +301,15 @@ std::unique_ptr<ASTNode> Parser::parseWhile()
         std::move(condition),
         std::move(body)
     );
+}
+
+std::unique_ptr<ASTNode> Parser::parsePrint()
+{
+    consume(PRINT);
+
+    std::unique_ptr<ASTNode> expression = parseComparison();
+
+    return std::make_unique<PrintNode>(std::move(expression));
 }
 
 std::unique_ptr<ASTNode> Parser::parse()

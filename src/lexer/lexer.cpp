@@ -166,6 +166,10 @@ Token Lexer::nextToken()
         {
             Variable.type = TokenType::WHILE;
         }
+        else if(Variable.value == "print")
+        {
+            Variable.type = TokenType::PRINT;
+        }
 
         return Variable;
     }

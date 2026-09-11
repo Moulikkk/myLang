@@ -8,7 +8,7 @@ No libraries. Just a handwritten lexer, parser, compiler, and VM.
 - [x] Parser
 - [x] Bytecode compiler
 - [x] Virtual machine
-- [ ] Variables and control flow
+- [x] Variables and control flow
 - [ ] Functions
 - [ ] Debugging tools (disassembler or REPL)
 
@@ -29,8 +29,12 @@ g++ src/main.cpp src/lexer/lexer.cpp src/parser/parser.cpp src/compiler/compiler
 ```
 
 ## Example
-// arithmetic expressions currently supported
-12 + 3 * (45 - 6)  // outputs 129
+// put this inside lexer in main.cpp
+ "x = 0\n"
+        "while (x < 5) {\n"
+        "x = x + 1\n"
+        "}\n"
+        "print x\n"
 
 ## Project Structure
 

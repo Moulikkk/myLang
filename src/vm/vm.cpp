@@ -171,7 +171,8 @@ void VM::execute(Chunk chunk)
     }
     else if (chunk.code[ip] == OP_PRINT)
     {
-      cout << stack.back();
+      cout << stack.back() << endl;
+      stack.pop_back();
       ip++;
     }
     else if (chunk.code[ip] == OP_HALT)

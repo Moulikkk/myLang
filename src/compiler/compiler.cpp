@@ -196,6 +196,17 @@ void Compiler::compile(ASTNode *node)
         return;
     }
 
+    else if (dynamic_cast<PrintNode *>(node) != nullptr)
+    {
+        PrintNode *printNode = dynamic_cast<PrintNode *>(node);
+
+        compile(printNode->expression.get());
+
+        chunk.code.push_back(OP_PRINT);
+
+        return;
+    }
+
     throw std::runtime_error("Unknown AST node");
 }
 
