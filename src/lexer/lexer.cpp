@@ -86,6 +86,12 @@ Token Lexer::nextToken()
         return {TokenType::RBRACE,"}"};
     }
 
+    if (input[curr_position] == ',')
+    {
+        curr_position++;
+        return {TokenType::COMMA, ","};
+    }
+
     if (input[curr_position] == '<')
     {
         if (match('='))
@@ -165,6 +171,14 @@ Token Lexer::nextToken()
         else if(Variable.value == "while")
         {
             Variable.type = TokenType::WHILE;
+        }
+        else if(Variable.value == "fn")
+        {
+            Variable.type = TokenType::FN;
+        }
+        else if(Variable.value == "return")
+        {
+            Variable.type = TokenType::RETURN;
         }
         else if(Variable.value == "print")
         {

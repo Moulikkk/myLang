@@ -72,6 +72,30 @@ struct WhileNode : ASTNode
     WhileNode(std::unique_ptr<ASTNode> c, std::unique_ptr<ProgramNode> b) : condition(move(c)), body(move(b)) {}
 };
 
+struct FunctionNode : ASTNode
+{
+    std::string functionName;
+    std::vector<std::string> parameters;
+    std::unique_ptr<ProgramNode> body;
+
+    FunctionNode(std::string name, std::vector<std::string> params, std::unique_ptr<ProgramNode> b) : functionName(name), parameters(std::move(params)), body(std::move(b)) {}
+};
+
+struct ReturnNode : ASTNode
+{
+    std::unique_ptr<ASTNode> expression;
+
+    ReturnNode(std::unique_ptr<ASTNode> e) : expression(move(e)) {}
+};
+
+struct CallNode : ASTNode
+{
+    std::string functionName;
+    std::vector<std::unique_ptr<ASTNode>> arguments;
+
+    CallNode(std::string name, std::vector<std::unique_ptr<ASTNode>> args) : functionName(name), arguments(std::move(args)) {}
+};
+
 struct PrintNode : ASTNode
 {
     std::unique_ptr<ASTNode> expression;
@@ -107,6 +131,12 @@ public:
     std::unique_ptr<ASTNode> parseStatement();
 
     std::unique_ptr<ASTNode> parseWhile();
+
+    std::unique_ptr<ASTNode> parseFunction();
+
+    std::unique_ptr<ASTNode> parseReturn();
+
+    std::unique_ptr<ASTNode> parseCall();
 
     std::unique_ptr<ASTNode> parsePrint();
 

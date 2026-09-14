@@ -53,6 +53,19 @@ std::unique_ptr<ASTNode> Parser::parseFactor()
         return std::make_unique<VariableNode>(value);
     }
 
+    if (curr_Token.type == TokenType::IDENTIFIER)
+    {
+        if (peek_Token.type == TokenType::LPAREN)
+        {
+            return parseCall();
+        }
+
+        std::string name = curr_Token.value;
+        advance();
+
+        return std::make_unique<VariableNode>(name);
+    }
+
     throw std::runtime_error("Expected number or '('");
 }
 
@@ -257,6 +270,14 @@ std::unique_ptr<ASTNode> Parser::parseStatement()
             return parseComparison();
         }
     }
+    else if (curr_Token.type == TokenType::FN)
+    {
+        return parseFunction();
+    }
+    else if (curr_Token.type == TokenType::RETURN)
+    {
+        return parseReturn();
+    }
     else if(curr_Token.type == PRINT)
     {
         return parsePrint();
@@ -299,6 +320,91 @@ std::unique_ptr<ASTNode> Parser::parseWhile()
 
     return std::make_unique<WhileNode>(
         std::move(condition),
+        std::move(body)
+    );
+}
+
+std::unique_ptr<ASTNode> Parser::parseReturn()
+{
+    advance();
+
+    auto expression = parseExpression();
+
+    return std::make_unique<ReturnNode>(std::move(expression));
+}
+
+std::unique_ptr<ASTNode> Parser::parseCall()
+{
+    std::string functionName = curr_Token.value;
+
+    advance();
+    consume(TokenType::LPAREN);
+
+    std::vector<std::unique_ptr<ASTNode>> arguments;
+
+    if (curr_Token.type != TokenType::RPAREN)
+    {
+        arguments.push_back(parseExpression());
+
+        while (curr_Token.type == TokenType::COMMA)
+        {
+            advance();
+            arguments.push_back(parseExpression());
+        }
+    }
+
+    consume(TokenType::RPAREN);
+
+    return std::make_unique<CallNode>(functionName, std::move(arguments));
+}
+
+std::unique_ptr<ASTNode> Parser::parseFunction()
+{
+    advance();
+
+    std::string functionName = curr_Token.value;
+    consume(TokenType::IDENTIFIER);
+
+    consume(TokenType::LPAREN);
+
+    std::vector<std::string> parameters;
+
+    if (curr_Token.type != TokenType::RPAREN)
+    {
+        parameters.push_back(curr_Token.value);
+        consume(TokenType::IDENTIFIER);
+
+        while (curr_Token.type == TokenType::COMMA)
+        {
+            advance();
+
+            parameters.push_back(curr_Token.value);
+            consume(TokenType::IDENTIFIER);
+        }
+    }
+
+    consume(TokenType::RPAREN);
+
+    consume(TokenType::LBRACE);
+
+    std::unique_ptr<ProgramNode> body = std::make_unique<ProgramNode>();
+
+    while (curr_Token.type != TokenType::RBRACE)
+    {
+        if (curr_Token.type == TokenType::NEWLINE)
+        {
+            advance();
+            continue;
+        }
+
+        body->statements.push_back(parseStatement());
+    }
+
+    consume(TokenType::RBRACE);
+
+    return std::make_unique<FunctionNode>(
+        functionName,
+        std::move(parameters),
         std::move(body)
     );
 }

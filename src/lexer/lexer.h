@@ -23,6 +23,9 @@ enum TokenType
     ELSE,
     WHILE,
     PRINT,
+    FN,
+    RETURN,
+    COMMA,
     NEWLINE,
     END,
     EQUAL
