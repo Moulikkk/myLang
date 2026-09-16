@@ -24,8 +24,19 @@ enum OpCode
     OP_STORE,
     OP_LOAD,
 
+    OP_CALL,
+    OP_RETURN,
+
     OP_PRINT,
     OP_HALT
+};
+
+struct FunctionInfo
+{
+    string name;
+    int address;
+    int parameterCount;
+    vector<string> parameters;
 };
 
 struct Chunk
@@ -33,13 +44,16 @@ struct Chunk
     vector<int> code;
     vector<double> constants;
     vector<string> variables;
+    vector<FunctionInfo> functions;
 };
 
 class Compiler
 {
     Chunk chunk;
+
     void compile(ASTNode *node);
     int getVariableIndex(const string &name);
+    int getFunctionIndex(const string &name);
 
 public:
     Chunk run(unique_ptr<ASTNode> root);

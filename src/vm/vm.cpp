@@ -126,17 +126,19 @@ void VM::execute(Chunk chunk)
     }
     else if(chunk.code[ip] == OP_JUMP)
     {
-        ip++;
-        int destination = chunk.code[ip];    
-        ip = destination;
+      ip++;
+      int destination = chunk.code[ip];
+      ip = destination;
     }
     else if(chunk.code[ip] == OP_JUMP_IF_FALSE)
     {
       double condition = stack.back();
       stack.pop_back();
+
       ip++;
+
       int destination = chunk.code[ip];
-      
+
       if(!condition)
       {
         ip = destination;
@@ -155,7 +157,15 @@ void VM::execute(Chunk chunk)
       int index = chunk.code[ip];
 
       string name = chunk.variables[index];
-      variables[name] = value;
+
+      if (callStack.empty())
+      {
+        variables[name] = value;
+      }
+      else
+      {
+        callStack.back().variables[name] = value;
+      }
 
       ip++;
     }
@@ -165,9 +175,54 @@ void VM::execute(Chunk chunk)
       int index = chunk.code[ip];
 
       string name = chunk.variables[index];
-      stack.push_back(variables[name]);
+
+      if (callStack.empty())
+      {
+        stack.push_back(variables[name]);
+      }
+      else
+      {
+        stack.push_back(callStack.back().variables[name]);
+      }
 
       ip++;
+    }
+    else if (chunk.code[ip] == OP_CALL)
+    {
+      ip++;
+
+      int functionIndex = chunk.code[ip];
+
+      FunctionInfo function = chunk.functions[functionIndex];
+
+      CallFrame frame;
+
+      frame.returnAddress = ip + 1;
+
+      for (int i = function.parameterCount - 1; i >= 0; i--)
+      {
+        double argument = stack.back();
+        stack.pop_back();
+
+        frame.variables[function.parameters[i]] = argument;
+      }
+
+      callStack.push_back(frame);
+
+      ip = function.address;
+    }
+    else if (chunk.code[ip] == OP_RETURN)
+    {
+      double returnValue = stack.back();
+      stack.pop_back();
+
+      int returnAddress = callStack.back().returnAddress;
+
+      callStack.pop_back();
+
+      stack.push_back(returnValue);
+
+      ip = returnAddress;
     }
     else if (chunk.code[ip] == OP_PRINT)
     {
@@ -181,7 +236,7 @@ void VM::execute(Chunk chunk)
     }
     else
     {
-      throw std::runtime_error("Unknown opcode");
+      throw runtime_error("Unknown opcode");
     }
   }
 }

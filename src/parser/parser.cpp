@@ -46,13 +46,6 @@ std::unique_ptr<ASTNode> Parser::parseFactor()
         return result;
     }
 
-    if (curr_Token.type == IDENTIFIER)
-    {
-        string value = curr_Token.value;
-        consume(IDENTIFIER);
-        return std::make_unique<VariableNode>(value);
-    }
-
     if (curr_Token.type == TokenType::IDENTIFIER)
     {
         if (peek_Token.type == TokenType::LPAREN)

@@ -45,12 +45,14 @@ void printAST(ASTNode* node, int indent)
 
 int main()
 {
-    Lexer lexer(
-        "x = 0\n"
-        "while (x < 5) {\n"
-        "x = x + 1\n"
+   Lexer lexer(
+        "fn add(a, b) {\n"
+        "return a + b\n"
         "}\n"
+        "x = add(10, 20)\n"
+        "y = add(3, 7)\n"
         "print x\n"
+        "print y\n"
     );
 
     Parser parser(lexer);

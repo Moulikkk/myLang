@@ -2,7 +2,6 @@
 #include <iostream>
 using namespace std;
 
-// helper function
 int Compiler::getVariableIndex(const string &name)
 {
     int index = -1;
@@ -24,7 +23,19 @@ int Compiler::getVariableIndex(const string &name)
 
     return index;
 }
-// helper function
+
+int Compiler::getFunctionIndex(const string &name)
+{
+    for (int i = 0; i < chunk.functions.size(); i++)
+    {
+        if (chunk.functions[i].name == name)
+        {
+            return i;
+        }
+    }
+
+    throw runtime_error("Unknown function: " + name);
+}
 
 void Compiler::compile(ASTNode *node)
 {
@@ -40,13 +51,23 @@ void Compiler::compile(ASTNode *node)
     AssignmentNode *assign = dynamic_cast<AssignmentNode *>(node);
     IfNode *ifNode = dynamic_cast<IfNode *>(node);
     WhileNode *whileNode = dynamic_cast<WhileNode *>(node);
+    FunctionNode *functionNode = dynamic_cast<FunctionNode *>(node);
+    ReturnNode *returnNode = dynamic_cast<ReturnNode *>(node);
+    CallNode *callNode = dynamic_cast<CallNode *>(node);
+    PrintNode *printNode = dynamic_cast<PrintNode *>(node);
 
     if (program != nullptr)
     {
         for (int i = 0; i < program->statements.size(); i++)
         {
+            if (dynamic_cast<FunctionNode *>(program->statements[i].get()) != nullptr)
+            {
+                continue;
+            }
+
             compile(program->statements[i].get());
         }
+
         return;
     }
 
@@ -109,7 +130,7 @@ void Compiler::compile(ASTNode *node)
         }
         else
         {
-            throw std::runtime_error("Unknown operator: " + bin->op);
+            throw runtime_error("Unknown operator: " + bin->op);
         }
 
         return;
@@ -188,7 +209,6 @@ void Compiler::compile(ASTNode *node)
         compile(whileNode->body.get());
 
         chunk.code.push_back(OP_JUMP);
-
         chunk.code.push_back(loopStart);
 
         chunk.code[jumpIfFalsePosition] = chunk.code.size();
@@ -196,10 +216,51 @@ void Compiler::compile(ASTNode *node)
         return;
     }
 
-    else if (dynamic_cast<PrintNode *>(node) != nullptr)
+    else if (functionNode != nullptr)
     {
-        PrintNode *printNode = dynamic_cast<PrintNode *>(node);
+        int functionIndex = getFunctionIndex(functionNode->functionName);
 
+        chunk.functions[functionIndex].address = chunk.code.size();
+
+        for (int i = 0; i < functionNode->parameters.size(); i++)
+        {
+            getVariableIndex(functionNode->parameters[i]);
+        }
+
+        compile(functionNode->body.get());
+
+        chunk.code.push_back(OP_PUSH);
+        chunk.code.push_back(0);
+        chunk.code.push_back(OP_RETURN);
+
+        return;
+    }
+
+    else if (returnNode != nullptr)
+    {
+        compile(returnNode->expression.get());
+        chunk.code.push_back(OP_RETURN);
+
+        return;
+    }
+
+    else if (callNode != nullptr)
+    {
+        for (int i = 0; i < callNode->arguments.size(); i++)
+        {
+            compile(callNode->arguments[i].get());
+        }
+
+        int functionIndex = getFunctionIndex(callNode->functionName);
+
+        chunk.code.push_back(OP_CALL);
+        chunk.code.push_back(functionIndex);
+
+        return;
+    }
+
+    else if (printNode != nullptr)
+    {
         compile(printNode->expression.get());
 
         chunk.code.push_back(OP_PRINT);
@@ -207,13 +268,58 @@ void Compiler::compile(ASTNode *node)
         return;
     }
 
-    throw std::runtime_error("Unknown AST node");
+    throw runtime_error("Unknown AST node");
 }
 
 Chunk Compiler::run(unique_ptr<ASTNode> root)
 {
     chunk = Chunk();
+
+    ProgramNode *program = dynamic_cast<ProgramNode *>(root.get());
+
+    if (program != nullptr)
+    {
+        for (int i = 0; i < program->statements.size(); i++)
+        {
+            FunctionNode *functionNode = dynamic_cast<FunctionNode *>(program->statements[i].get());
+
+            if (functionNode != nullptr)
+            {
+                FunctionInfo function;
+
+                function.name = functionNode->functionName;
+                function.address = -1;
+                function.parameterCount = functionNode->parameters.size();
+                function.parameters = functionNode->parameters;
+
+                chunk.functions.push_back(function);
+            }
+        }
+    }
+
+    int jumpOverFunctions = -1;
+
+    if (chunk.functions.size() > 0)
+    {
+        chunk.code.push_back(OP_JUMP);
+        jumpOverFunctions = chunk.code.size();
+        chunk.code.push_back(0);
+
+        for (int i = 0; i < program->statements.size(); i++)
+        {
+            FunctionNode *functionNode = dynamic_cast<FunctionNode *>(program->statements[i].get());
+
+            if (functionNode != nullptr)
+            {
+                compile(functionNode);
+            }
+        }
+
+        chunk.code[jumpOverFunctions] = chunk.code.size();
+    }
+
     compile(root.get());
+
     chunk.code.push_back(OP_HALT);
 
     return chunk;
