@@ -10,7 +10,7 @@ No libraries. Just a handwritten lexer, parser, compiler, and VM.
 - [x] Virtual machine
 - [x] Variables and control flow (if/else, while loops)
 - [x] Print statement
-- [ ] Functions
+- [x] Functions
 - [ ] Debugging tools (disassembler or REPL)
 
 ## How it works
@@ -31,13 +31,17 @@ g++ src/main.cpp src/lexer/lexer.cpp src/parser/parser.cpp src/compiler/compiler
 
 ## Example
 ```
-x = 0
-while (x < 5) {
-    x = x + 1
-}
-print x
+"fn add(a, b) {\n"
+        "return a + b\n"
+        "}\n"
+        "x = add(10, 20)\n"
+        "y = add(3, 7)\n"
+        "print x\n"
+        "print y\n"
 ```
-Output: 5
+Output: 
+30
+10
 
 ## Project Structure
 ```
