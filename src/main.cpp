@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "lexer/lexer.h"
 #include "parser/parser.h"
 #include "compiler/compiler.h"
@@ -43,24 +44,30 @@ void printAST(ASTNode* node, int indent)
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-   Lexer lexer(
-        "fn add(a, b) {\n"
-        "return a + b\n"
-        "}\n"
-        "x = add(10, 20)\n"
-        "y = add(3, 7)\n"
-        "print x\n"
-        "print y\n"
-    );
+    if (argc < 2)
+    {
+        cout << "Usage: neos <file.ns>" << endl;
+        return 1;
+    }
 
+    ifstream file(argv[1]);
+
+    if (!file.is_open())
+    {
+        cout << "Error: could not open file '" << argv[1] << "'" << endl;
+        return 1;
+    }
+
+    string source(istreambuf_iterator<char>(file), {});
+
+    Lexer lexer(source);
     Parser parser(lexer);
     Compiler compiler;
     VM vm;
 
     Chunk chunk = compiler.run(parser.parse());
-
     vm.execute(chunk);
 
     return 0;
